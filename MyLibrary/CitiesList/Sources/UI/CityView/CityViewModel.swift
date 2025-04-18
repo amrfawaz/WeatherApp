@@ -11,11 +11,12 @@ import SharedModules
 
 final public class CityViewModel: ObservableObject {
     let city: City
-
+    let citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>
     let actionSubject = PassthroughSubject<CityView.Action, Never>()
 
-    public init(city: City) {
+    public init(city: City, citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>) {
         self.city = city
+        self.citiesListActionSubject = citiesListActionSubject
     }
 
     func showHistory() {
@@ -25,6 +26,15 @@ final public class CityViewModel: ObservableObject {
     func showWeather() {
         actionSubject.send(.showCityWeather)
     }
+
+    func didTapDetailDisclosureButton() {
+        citiesListActionSubject.send(.showHistory(city: city))
+    }
+
+    func didTapCity() {
+        citiesListActionSubject.send(.showWeather(city: city))
+    }
+
 }
 
 // MARK: Mocks
@@ -32,14 +42,27 @@ final public class CityViewModel: ObservableObject {
 #if DEBUG
 extension CityViewModel {
     static var mockCityViewModel: CityViewModel {
-        CityViewModel(city: .mockedCity1)
+        CityViewModel(
+            city: .mockedCity1,
+            citiesListActionSubject: PassthroughSubject<CitiesListView.Action,
+            Never>()
+        )
     }
 
     static var mockCityViewModels: [CityViewModel] {
         [
-            CityViewModel(city: .mockedCity1),
-            CityViewModel(city: .mockedCity2),
-            CityViewModel(city: .mockedCity3)
+            CityViewModel(
+                city: .mockedCity1,
+                citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>()
+            ),
+            CityViewModel(
+                city: .mockedCity2,
+                citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>()
+            ),
+            CityViewModel(
+                city: .mockedCity3,
+                citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>()
+            )
         ]
     }
 }

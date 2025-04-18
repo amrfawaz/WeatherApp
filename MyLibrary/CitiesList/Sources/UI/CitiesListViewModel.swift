@@ -13,9 +13,12 @@ import CoreDataManager
 public final class CitiesListViewModel: ObservableObject {
     @Published var cities: [City] = []
 
-    var isLoading: Bool = false
-    public var searchCityName = ""
+    private(set) var isLoading: Bool = false
+
+    internal var searchCityName = ""
     internal var selectedCity: City?
+
+    var selectedHistoryCity: City?   // Add this state
 
     let actionSubject = PassthroughSubject<CitiesListView.Action, Never>()
 
@@ -27,24 +30,18 @@ public final class CitiesListViewModel: ObservableObject {
 
     
     func addCity(cityName: String) {
-        if !cities.contains(where: { $0.name == cityName }) {
-            
-            let city = City(
-                id: Int.random(in: 1...99999),
-                name: cityName,
-                weatherHistory: []
-            )
-            
-            cities.append(city)
-            saveCity(city)
-        }
-        
+        guard !cities.contains(where: { $0.name == cityName }) else { return }
+
+        let city = City(
+            id: Int.random(in: 1...99999),
+            name: cityName,
+            weatherHistory: []
+        )
+
+        cities.append(city)
+        saveCity(city)
     }
 
-    func didTapCity(city: City) {
-        selectedCity = city
-        actionSubject.send(.showWeather)
-    }
 
     func resetSelectedCity() {
         searchCityName = ""
@@ -62,13 +59,11 @@ public final class CitiesListViewModel: ObservableObject {
 
 private extension CitiesListViewModel {
     func saveCity(_ city: City) {
-        if !cities.contains(where: { $0.name == city.name }) {
-            do {
-                try CoreDataManager.shared.insertCity(city)
-                print("City inserted successfully")
-            } catch {
-                print("Failed to insert city: \(error)")
-            }
+        do {
+            try CoreDataManager.shared.insertCity(city)
+            print("City inserted successfully")
+        } catch {
+            print("Failed to insert city: \(error)")
         }
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 import Search
 import WeatherDetails
 import SharedModules
+import WeatherHistory
 
 final class Container {
     static func getSearchViewModel() -> SearchViewModel {
@@ -25,5 +26,12 @@ final class Container {
         }
 
         return WeatherDetailsViewModel(city: city, fetchCityWeatherUseCase: fetchCityWeatherUseCase)
+    }
+
+    static func getWeatherHistoryViewModel(city: City) -> WeatherHistoryViewModel {
+        WeatherHistoryViewModel(
+            cityName: city.name,
+            weatherHistoryUseCase: WeatherHistoryUseCase(repository: WeatherHistoryRepositiryImp(coreDataApi: CoreDataStoreAPI()))
+        )
     }
 }

@@ -21,14 +21,14 @@ public struct WeatherInfo: Codable, Hashable {
         weather: [Weather],
         main: Tempreture,
         wind: Wind,
-        date: String? = Date().toString()
+        date: String?
     ) {
         self.id = id
         self.name = name
         self.weather = weather
         self.main = main
         self.wind = wind
-        self.date = Date().toString()
+        self.date = date
     }
 }
 
@@ -151,7 +151,7 @@ extension Wind {
 public extension Date {
     func toString() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd.MM.yyyy - HH:mm"
+        dateFormatter.dateFormat = "dd.MM.yyyy - HH:mm:ss"
         return dateFormatter.string(from: Date())
     }
 }

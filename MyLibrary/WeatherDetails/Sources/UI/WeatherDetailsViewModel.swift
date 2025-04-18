@@ -93,7 +93,7 @@ private extension WeatherDetailsViewModel {
 
 #if DEBUG
 
-extension WeatherDetailsViewModel {
+public extension WeatherDetailsViewModel {
     static var mockWeatherDetailsViewModel: WeatherDetailsViewModel {
         WeatherDetailsViewModel(
             city: .mockedCity1,

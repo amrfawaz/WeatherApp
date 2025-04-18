@@ -10,6 +10,7 @@ import CoreStyles
 import Search
 import WeatherDetails
 import SharedModules
+import WeatherHistory
 
 public struct CitiesListView: View {
     enum Constants {
@@ -20,28 +21,30 @@ public struct CitiesListView: View {
         static let searchText = "Search"
     }
 
-    enum Action: Equatable {
+    public enum Action: Equatable {
         case showSearchView
-        case showWeather
+        case showWeather(city: City)
+        case showHistory(city: City)
     }
 
     enum NavigationDestination: Hashable {
         case search
         case weatherDetails(city: City)
-        case history
+//        case history(city: City)
     }
 
-    @ObservedObject private var viewModel: CitiesListViewModel
-    @State private var selectedCity: String = "" 
-    @State private var path = NavigationPath()
+    @StateObject private var viewModel: CitiesListViewModel
+    @State private var selectedCity: String = ""
+    @State private var navigationPath = NavigationPath()
+    @State private var showingHistorySheet = false  // Add this state
 
     public init (viewModel: CitiesListViewModel) {
-        self.viewModel = viewModel
+        _viewModel = StateObject(wrappedValue: viewModel)
     }
     
     public var body: some View {
         VStack {
-            NavigationStack(path: $path) {
+            NavigationStack(path: $navigationPath) {
                 VStack {
                     content
                         .padding(.top, Style.Spacing.md)
@@ -56,40 +59,49 @@ public struct CitiesListView: View {
                     viewModel.fetchCachedCities()
                 }
                 .onAppear {
-                    if !selectedCity.isEmpty {
-                        viewModel.addCity(cityName: selectedCity)
-                        selectedCity = ""
-                        viewModel.resetSelectedCity()
-                    }
+                    guard !selectedCity.isEmpty else { return }
+                    viewModel.addCity(cityName: selectedCity)
+                    selectedCity = ""
+                    viewModel.resetSelectedCity()
                 }
                 .onReceive(viewModel.actionSubject) { action in
-                    handleActions(action: action)
+                    handleActions(action)
                 }
                 .navigationDestination(for: NavigationDestination.self) { destination in
+//                    destinationView(for: destination)
+
                     switch destination {
                     case .search:
                         let searchViewModel = Container.getSearchViewModel()
                         SearchView(
                             viewModel: searchViewModel,
-                            path: _path,
+                            path: _navigationPath,
                             searchText: $selectedCity
                         )
                     case .weatherDetails(let city):
                         let weatherDetailsViewModel = Container.getWeatherDetailsViewModel(city: city)
                         WeatherDetailsView(
                             viewModel: weatherDetailsViewModel,
-                            path: $path
+                            path: $navigationPath
                         )
-
-                    default:
-                        let searchViewModel = Container.getSearchViewModel()
-                        SearchView(
-                            viewModel: searchViewModel,
-                            path: _path,
-                            searchText: $selectedCity
-                        )
+//                    case .history(let city):
+//                        let weatherHistoryViewModel = Container.getWeatherHistoryViewModel(city: city)
+//                        WeatherHistoryView(
+//                            viewModel: weatherHistoryViewModel,
+//                            path: $navigationPath
+//                        )
                     }
                 }
+                .sheet(isPresented: $showingHistorySheet, content: {
+                    if let city = viewModel.selectedHistoryCity {
+                        let weatherHistoryViewModel = Container.getWeatherHistoryViewModel(city: city)
+                        WeatherHistoryView(
+                            viewModel: weatherHistoryViewModel,
+                            path: $navigationPath
+                        )
+                    }
+                })
+
             }
         }
     }
@@ -103,13 +115,16 @@ public struct CitiesListView: View {
         }
     }
 
-    private func handleActions(action: Action) {
+    private func handleActions(_ action: Action) {
         switch action {
         case .showSearchView:
-            path.append(NavigationDestination.search)
-        case .showWeather:
-            guard let city = viewModel.selectedCity else { return }
-            path.append(NavigationDestination.weatherDetails(city: city))
+            navigationPath.append(NavigationDestination.search)
+        case .showWeather(let city):
+            navigationPath.append(NavigationDestination.weatherDetails(city: city))
+        case .showHistory(let city):
+            viewModel.selectedHistoryCity = city
+            showingHistorySheet = true
+//            navigationPath.append(NavigationDestination.history(city: city))
         }
     }
 }
@@ -128,11 +143,11 @@ private extension CitiesListView {
     private var list: some View {
         LazyVStack {
             ForEach(viewModel.cities) { city in
-                let cityViewModel = CityViewModel(city: city)
+                let cityViewModel = CityViewModel(
+                    city: city,
+                    citiesListActionSubject: viewModel.actionSubject
+                )
                 CityView(viewModel: cityViewModel)
-                    .onTapGesture {
-                        viewModel.didTapCity(city: city)
-                    }
                 
             }
         }

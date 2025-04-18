@@ -30,6 +30,9 @@ public struct CityView: View {
             HStack {
                 Text(viewModel.city.name)
                     .typography(.heading03)
+                    .onTapGesture {
+                        viewModel.didTapCity()
+                    }
 
                 Spacer()
 
@@ -41,13 +44,16 @@ public struct CityView: View {
                         height: Constants.iconSize
                     )
                     .foregroundColor(.gray)
+                    .onTapGesture {
+                        viewModel.didTapDetailDisclosureButton()
+                    }
             }
 
             Divider()
         }
         .padding(.horizontal, Style.Spacing.md)
         .onReceive(viewModel.actionSubject) { action in
-            handleActions(action: action)
+//            handleActions(action: action)
         }
     }
 
