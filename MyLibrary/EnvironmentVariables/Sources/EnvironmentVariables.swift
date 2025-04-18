@@ -9,6 +9,7 @@ import Foundation
 
 public enum EnvironmentVariables: String {
     case baseUrl = "https://api.openweathermap.org/data"
+    case baseIconUrl = "http://openweathermap.org/img/w"
     case version = "/2.5"
     case apiKey = "f5cb0b965ea1564c50c6f1b74534d823"
     case accept = "application/json"
@@ -19,5 +20,10 @@ public enum EnvironmentVariables: String {
         EnvironmentVariables.version.rawValue +
         EnvironmentVariables.weatherApi.rawValue +
         "\(city)"
+    }
+
+    public static func iconUrl(iconName: String) -> String {
+        EnvironmentVariables.baseIconUrl.rawValue +
+        "/\(iconName).png"
     }
 }
