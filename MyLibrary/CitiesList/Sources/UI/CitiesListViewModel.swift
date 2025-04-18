@@ -10,12 +10,12 @@ import Combine
 import SharedModules
 import CoreDataManager
 
-final public class CitiesListViewModel: ObservableObject {
+public final class CitiesListViewModel: ObservableObject {
     @Published var cities: [City] = []
 
     var isLoading: Bool = false
-    var searchCityName = ""
-    var selectedCity: City?
+    public var searchCityName = ""
+    internal var selectedCity: City?
 
     let actionSubject = PassthroughSubject<CitiesListView.Action, Never>()
 
@@ -27,14 +27,17 @@ final public class CitiesListViewModel: ObservableObject {
 
     
     func addCity(cityName: String) {
-        let city = City(
-            id: Int.random(in: 1...99999),
-            name: cityName,
-            weatherHistory: []
-        )
-
-        cities.append(city)
-        saveCity(city)
+        if !cities.contains(where: { $0.name == cityName }) {
+            
+            let city = City(
+                id: Int.random(in: 1...99999),
+                name: cityName,
+                weatherHistory: []
+            )
+            
+            cities.append(city)
+            saveCity(city)
+        }
         
     }
 
@@ -59,11 +62,13 @@ final public class CitiesListViewModel: ObservableObject {
 
 private extension CitiesListViewModel {
     func saveCity(_ city: City) {
-        do {
-            try CoreDataManager.shared.insertCity(city)
-            print("City inserted successfully")
-        } catch {
-            print("Failed to insert city: \(error)")
+        if !cities.contains(where: { $0.name == city.name }) {
+            do {
+                try CoreDataManager.shared.insertCity(city)
+                print("City inserted successfully")
+            } catch {
+                print("Failed to insert city: \(error)")
+            }
         }
     }
 }
@@ -72,12 +77,12 @@ private extension CitiesListViewModel {
 
 #if DEBUG
 
-extension CitiesListViewModel {
-//    static var mockCitiesListViewModel: CitiesListViewModel {
-//        let viewModel = CitiesListViewModel(fetchCityWeatherUseCase: FetchCityWeatherUseCase(repository: CitiesRepository()))
-//        viewModel.cities = City.mockedCities
-//        return viewModel
-//    }
+public extension CitiesListViewModel {
+    static var mockCitiesListViewModel: CitiesListViewModel {
+        let viewModel = CitiesListViewModel()
+        viewModel.cities = City.mockedCities
+        return viewModel
+    }
 }
 
 #endif

@@ -142,15 +142,15 @@ private extension CitiesListView {
 // MARK: - Preview
 
 #if DEBUG
-//struct SearchView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VStack {
-//            citiesListView()
-//        }
-//    }
-//
-//    private static func citiesListView() -> some View {
-//        CitiesListView(viewModel: CitiesListViewModel(fetchCityWeatherUseCase: FetchCityWeatherUseCase(repository: CitiesRepositoryImp(api: .fetchWeather()))))
-//    }
-//}
+struct SearchView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            citiesListView()
+        }
+    }
+
+    private static func citiesListView() -> some View {
+        CitiesListView(viewModel: .mockCitiesListViewModel)
+    }
+}
 #endif

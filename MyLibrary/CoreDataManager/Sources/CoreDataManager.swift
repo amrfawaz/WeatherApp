@@ -86,6 +86,7 @@ public class CoreDataManager {
         if let existingCity = existingCities.first {
             // Update existing city
             cityEntity = existingCity
+            return
         } else {
             // Create new city
             cityEntity = CityEntity(context: context)
@@ -202,4 +203,3 @@ public class CoreDataManager {
         )
     }
 }
-
