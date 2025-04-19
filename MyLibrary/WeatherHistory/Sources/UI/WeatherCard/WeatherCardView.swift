@@ -18,13 +18,15 @@ public struct WeatherCardView: View {
     public var body: some View {
         VStack(
             alignment: .leading,
-            spacing: Style.Spacing.xs
+            spacing: Style.Spacing.xxs
         ) {
             Text(viewModel.date)
-                .typography(.heading02)
+                .typography(.button01)
+                .foregroundColor(Color(uiColor: .darkGray))
 
             Text(viewModel.cityNameAndTemp)
                 .typography(.heading03)
+                .foregroundColor(.teal)
 
             Divider()
         }
