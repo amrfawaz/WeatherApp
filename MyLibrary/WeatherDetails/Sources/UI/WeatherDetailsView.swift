@@ -26,80 +26,111 @@ public struct WeatherDetailsView: View {
                 weatherInfoDetails
             }
             .navigationTitle(viewModel.cityName)
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 if viewModel.weatherInfo == nil {
                     await viewModel.fetchWeather()
                 }
             }
+            .padding(.horizontal, Style.Spacing.md)
+
             Spacer()
+
+            header
         }
     }
 
     private var weatherInfoDetails: some View {
-        VStack(
-            alignment: .leading,
-            spacing: Style.Spacing.lg
-        ) {
-            header
-//            icon
-            description
-            temp
-            humidity
-            windSpeed
+        VStack(spacing: Style.Spacing.lg) {
+            VStack(alignment: .center) {
+//                icon
+            }
+
+            VStack(
+                alignment: .leading,
+                spacing: Style.Spacing.md
+            ) {
+                description
+                temp
+                humidity
+                windSpeed
+            }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, Style.Spacing.lg)
+        .background(Color.white)
+        .cornerRadius(Style.CornerRadius.xxxl)
+        .shadow(
+            color: Color.black.opacity(0.1),
+            radius: 8,
+            x: 0,
+            y: 4
+        )
     }
 
     private var header: some View {
         Text("Weather information for \(viewModel.cityName) received on \(viewModel.date)")
+            .foregroundColor(Color(uiColor: .darkGray))
+            .multilineTextAlignment(.center)
     }
 
     @ViewBuilder
     private var icon: some View {
         if let url = URL(string: viewModel.iconUrl()) {
-            Rectangle()
-                .asyncImage(url: url)
-                .frame(width: 50, height: 50)
-                .clipShape(.rect(cornerRadius: Style.Spacing.md))
+            VStack(alignment: .center) {
+                AsyncImage(url: url)
+                    .frame(width: 70, height: 70)
+                    .clipShape(.rect(cornerRadius: Style.CornerRadius.md))
+            }
         }
     }
 
     private var description: some View {
         HStack(spacing: Style.Spacing.xs) {
-            Text("Description: ")
-                .typography(.heading03)
+            Text("DESCRIPTION: ")
+                .typography(.button01)
+                .foregroundColor(Color(uiColor: .darkGray))
+            
 
             Text(viewModel.description)
-                .typography(.caption01)
+                .typography(.heading02)
+                .foregroundColor(.teal)
         }
     }
 
     private var temp: some View {
         HStack(spacing: Style.Spacing.xs) {
-            Text("Temp: ")
-                .typography(.heading03)
+            Text("TEPRETURE: ")
+                .typography(.button01)
+                .foregroundColor(Color(uiColor: .darkGray))
 
             Text(viewModel.temp)
-                .typography(.caption01)
+                .typography(.heading02)
+                .foregroundColor(.teal)
         }
     }
 
     private var humidity: some View {
         HStack(spacing: Style.Spacing.xs) {
-            Text("Humidity: ")
-                .typography(.heading03)
+            Text("HUMIDITY: ")
+                .typography(.button01)
+                .foregroundColor(Color(uiColor: .darkGray))
 
             Text(viewModel.humidity)
-                .typography(.caption01)
+                .typography(.heading02)
+                .foregroundColor(.teal)
         }
     }
 
     private var windSpeed: some View {
         HStack(spacing: Style.Spacing.xs) {
-            Text("Wind Speed: ")
-                .typography(.heading03)
+            Text("WINDSPEED: ")
+                .typography(.button01)
+                .foregroundColor(Color(uiColor: .darkGray))
 
             Text(viewModel.windSpeed)
-                .typography(.caption01)
+                .typography(.heading02)
+                .foregroundColor(.teal)
         }
     }
 }
