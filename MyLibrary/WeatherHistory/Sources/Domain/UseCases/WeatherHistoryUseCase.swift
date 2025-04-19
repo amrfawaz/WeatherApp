@@ -16,6 +16,10 @@ public class WeatherHistoryUseCase {
     }
 
     func getWeatherHistory(cityName: String) -> [WeatherInfo] {
-        return repository.getWeatherHistory(cityName: cityName)
+        repository.getWeatherHistory(cityName: cityName)
+    }
+
+    func getCity(cityName: String) -> City? {
+        repository.getCity(cityName: cityName)
     }
 }

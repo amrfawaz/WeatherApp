@@ -19,4 +19,8 @@ public class WeatherHistoryRepositiryImp: WeatherHistoryRepository {
     public func getWeatherHistory(cityName: String) -> [WeatherInfo] {
         coreDataApi.getWeatherHistory(cityName: cityName)
     }
+
+    public func getCity(cityName: String) -> City? {
+        coreDataApi.getCity(cityName: cityName)
+    }
 }

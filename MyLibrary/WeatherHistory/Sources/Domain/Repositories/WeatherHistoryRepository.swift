@@ -9,4 +9,5 @@ import SharedModules
 
 public protocol WeatherHistoryRepository {
     func getWeatherHistory(cityName: String) -> [WeatherInfo]
+    func getCity(cityName: String) -> City?
 }

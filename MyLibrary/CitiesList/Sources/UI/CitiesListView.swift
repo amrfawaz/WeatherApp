@@ -30,13 +30,12 @@ public struct CitiesListView: View {
     enum NavigationDestination: Hashable {
         case search
         case weatherDetails(city: City)
-//        case history(city: City)
     }
 
     @StateObject private var viewModel: CitiesListViewModel
     @State private var selectedCity: String = ""
     @State private var navigationPath = NavigationPath()
-    @State private var showingHistorySheet = false  // Add this state
+    @State private var showingHistorySheet = false
 
     public init (viewModel: CitiesListViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
@@ -68,8 +67,6 @@ public struct CitiesListView: View {
                     handleActions(action)
                 }
                 .navigationDestination(for: NavigationDestination.self) { destination in
-//                    destinationView(for: destination)
-
                     switch destination {
                     case .search:
                         let searchViewModel = Container.getSearchViewModel()
@@ -82,26 +79,16 @@ public struct CitiesListView: View {
                         let weatherDetailsViewModel = Container.getWeatherDetailsViewModel(city: city)
                         WeatherDetailsView(
                             viewModel: weatherDetailsViewModel,
-                            path: $navigationPath
+                            navigationPath: _navigationPath
                         )
-//                    case .history(let city):
-//                        let weatherHistoryViewModel = Container.getWeatherHistoryViewModel(city: city)
-//                        WeatherHistoryView(
-//                            viewModel: weatherHistoryViewModel,
-//                            path: $navigationPath
-//                        )
                     }
                 }
                 .sheet(isPresented: $showingHistorySheet, content: {
                     if let city = viewModel.selectedHistoryCity {
                         let weatherHistoryViewModel = Container.getWeatherHistoryViewModel(city: city)
-                        WeatherHistoryView(
-                            viewModel: weatherHistoryViewModel,
-                            path: $navigationPath
-                        )
+                        WeatherHistoryView(viewModel: weatherHistoryViewModel)
                     }
                 })
-
             }
         }
     }
@@ -124,7 +111,6 @@ public struct CitiesListView: View {
         case .showHistory(let city):
             viewModel.selectedHistoryCity = city
             showingHistorySheet = true
-//            navigationPath.append(NavigationDestination.history(city: city))
         }
     }
 }

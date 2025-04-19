@@ -11,7 +11,7 @@ import SharedModules
 import EnvironmentVariables
 
 final public class WeatherDetailsViewModel: ObservableObject {
-    @Published private var weatherInfo: WeatherInfo?
+    @Published private(set) var weatherInfo: WeatherInfo?
     @Published var errorMessage: String = ""
     @Published private(set) var isLoading: Bool = false
 
@@ -20,10 +20,12 @@ final public class WeatherDetailsViewModel: ObservableObject {
 
     public init(
         city: City,
-        fetchCityWeatherUseCase: FetchCityWeatherUseCase
+        fetchCityWeatherUseCase: FetchCityWeatherUseCase,
+        weatherInfo: WeatherInfo? = nil
     ) {
         self.city = city
         self.fetchCityWeatherUseCase = fetchCityWeatherUseCase
+        self.weatherInfo = weatherInfo
     }
 
     var cityName: String {

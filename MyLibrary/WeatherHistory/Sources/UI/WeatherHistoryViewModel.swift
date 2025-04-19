@@ -7,12 +7,15 @@
 
 import Foundation
 import SharedModules
+import Combine
 
 final public class WeatherHistoryViewModel: ObservableObject {
     @Published var weatherInfo: [WeatherInfo] = []
 
     private let weatherHistoryUseCase: WeatherHistoryUseCase
     private let cityName: String
+
+    let actionSubject = PassthroughSubject<WeatherHistoryView.Action, Never>()
 
     public init(
         cityName: String,
@@ -29,6 +32,16 @@ final public class WeatherHistoryViewModel: ObservableObject {
     @MainActor
     func getWeatherHistory() {
         weatherInfo = weatherHistoryUseCase.getWeatherHistory(cityName: cityName)
+    }
+
+    func didTapWeather(weatherInfo: WeatherInfo) {
+        guard let city = weatherHistoryUseCase.getCity(cityName: cityName) else { return }
+        actionSubject.send(
+            .showWeather(
+                city: city,
+                weatherInfo: weatherInfo
+            )
+        )
     }
 }
 

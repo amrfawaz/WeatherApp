@@ -7,22 +7,33 @@
 
 import SwiftUI
 import CoreStyles
+import SharedModules
+import WeatherDetails
 
 public struct WeatherHistoryView: View {
-    @ObservedObject var viewModel: WeatherHistoryViewModel
-    @Binding var path: NavigationPath
+    enum Action: Equatable {
+        case showWeather(
+            city: City,
+            weatherInfo: WeatherInfo
+        )
+    }
+    enum NavigationDestination: Hashable {
+        case weatherDetails(
+            city: City,
+            weatherInfo: WeatherInfo
+        )
+    }
 
-    public init(
-        viewModel: WeatherHistoryViewModel,
-        path: Binding<NavigationPath>
-    ) {
+    @ObservedObject var viewModel: WeatherHistoryViewModel
+    @State private var navigationPath = NavigationPath()
+
+    public init(viewModel: WeatherHistoryViewModel) {
         self.viewModel = viewModel
-        self._path = path
     }
 
     public var body: some View {
         VStack {
-            NavigationStack(path: $path) {
+            NavigationStack(path: $navigationPath) {
                 VStack {
                     content
                         .padding(.top, Style.Spacing.md)
@@ -31,6 +42,20 @@ public struct WeatherHistoryView: View {
                     viewModel.getWeatherHistory()
                 }
                 .navigationTitle(viewModel.title)
+                .onReceive(viewModel.actionSubject) { action in
+                    handleActions(action)
+                }
+                .navigationDestination(for: NavigationDestination.self) { destination in
+                    switch destination {
+                    case .weatherDetails(let city, let weatherInfo):
+                        let weatherDetailsViewModel = Container.getWeatherDetailsViewModel(city: city, weatherInfo: weatherInfo)
+                        WeatherDetailsView(
+                            viewModel: weatherDetailsViewModel,
+                            navigationPath: _navigationPath
+                        )
+                    }
+                }
+
             }
         }
     }
@@ -45,16 +70,28 @@ private extension WeatherHistoryView {
         }
     }
 
-    private var list: some View {
+    var list: some View {
         LazyVStack {
             ForEach(viewModel.weatherInfo, id: \.date) { weatherHistory in
                 let weatherCardViewModel = WeatherCardViewModel(weatherInfo: weatherHistory)
                 WeatherCardView(viewModel: weatherCardViewModel)
-//                    .onTapGesture {
-////                        viewModel.didTapCity(city: city)
-//                    }
+                    .onTapGesture {
+                        viewModel.didTapWeather(weatherInfo: weatherHistory)
+                    }
                 
             }
+        }
+    }
+
+    private func handleActions(_ action: Action) {
+        switch action {
+        case .showWeather(let city, let weatherInfo):
+            navigationPath.append(
+                NavigationDestination.weatherDetails(
+                    city: city,
+                    weatherInfo: weatherInfo
+                )
+            )
         }
     }
 }
@@ -71,7 +108,7 @@ struct WeatherHistoryView_Previews: PreviewProvider {
 
     private static func citiesListView() -> some View {
         @State var path = NavigationPath()
-        return WeatherHistoryView(viewModel: .mockWeatherHistoryViewModel, path: $path)
+        return WeatherHistoryView(viewModel: .mockWeatherHistoryViewModel)
     }
 }
 #endif

@@ -10,24 +10,26 @@ import CoreStyles
 
 public struct WeatherDetailsView: View {
     @ObservedObject var viewModel: WeatherDetailsViewModel
-    @Binding var path: NavigationPath
+    @State private var navigationPath = NavigationPath()
 
     public init(
         viewModel: WeatherDetailsViewModel,
-        path: Binding<NavigationPath>
+        navigationPath: State<NavigationPath>
     ) {
         self.viewModel = viewModel
-        self._path = path
+        self._navigationPath = navigationPath
     }
 
     public var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack(path: $navigationPath) {
             VStack {
                 weatherInfoDetails
             }
             .navigationTitle(viewModel.cityName)
             .task {
-                await viewModel.fetchWeather()
+                if viewModel.weatherInfo == nil {
+                    await viewModel.fetchWeather()
+                }
             }
             Spacer()
         }
@@ -114,11 +116,11 @@ struct WeatherDetailsView_Previews: PreviewProvider {
     }
 
     private static func weatherDetailsView() -> some View {
-        @State var path = NavigationPath()
+        @State var navigationPath = NavigationPath()
 
         return WeatherDetailsView(
             viewModel: .mockWeatherDetailsViewModel,
-            path: $path
+            navigationPath: _navigationPath
         )
     }
 }

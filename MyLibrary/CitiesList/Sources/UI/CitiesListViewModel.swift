@@ -18,7 +18,7 @@ public final class CitiesListViewModel: ObservableObject {
     internal var searchCityName = ""
     internal var selectedCity: City?
 
-    var selectedHistoryCity: City?   // Add this state
+    var selectedHistoryCity: City?
 
     let actionSubject = PassthroughSubject<CitiesListView.Action, Never>()
 
