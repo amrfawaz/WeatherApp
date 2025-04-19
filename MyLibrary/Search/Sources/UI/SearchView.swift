@@ -15,6 +15,7 @@ public struct SearchView: View {
         static let clearImageName = "xmark.circle.fill"
         static let cancelText = "Cancel"
         static let addCityText = "Add City"
+        static let message = "Enter city, postcode, or airport location"
     }
     enum Action: Equatable {
         case search
@@ -37,6 +38,8 @@ public struct SearchView: View {
 
     public var body: some View {
         VStack {
+            headerMessage
+
             searchBarView
 
             searchButton
@@ -51,8 +54,13 @@ public struct SearchView: View {
 
 // MARK: - Extension
 
-extension SearchView {
-    private var searchBarView: some View {
+private extension SearchView {
+    var headerMessage: some View {
+        Text(Constants.message)
+            .typography(.body01)
+    }
+
+    var searchBarView: some View {
         HStack {
             HStack {
                 magnifyingGlassImage
@@ -73,12 +81,12 @@ extension SearchView {
         .animation(.default, value: isFocused)
     }
 
-    private var magnifyingGlassImage: some View {
+    var magnifyingGlassImage: some View {
         Image(systemName: Constants.magnifyingGlass)
             .foregroundColor(.gray)
     }
 
-    private var searchTextField: some View {
+    var searchTextField: some View {
         TextField(Constants.searchPlaceholderText, text: $searchText)
             .focused($isFocused)
             .submitLabel(.search)
@@ -89,7 +97,7 @@ extension SearchView {
     }
 
     @ViewBuilder
-    private var clearButton: some View {
+    var clearButton: some View {
         if !searchText.isEmpty {
             Button(action: {
                 searchText = ""
@@ -102,7 +110,7 @@ extension SearchView {
     }
 
     @ViewBuilder
-    private var cancelButton: some View {
+    var cancelButton: some View {
         if isFocused {
             Button(Constants.cancelText) {
                 viewModel.clearSearch()
@@ -112,10 +120,9 @@ extension SearchView {
         }
     }
 
-    private var searchButton: some View {
+    var searchButton: some View {
         VStack {
             Button(action: {
-                // Update the shared Binding and perform search
                 viewModel.addCity(city: searchText)
                 isFocused = false
             }) {
