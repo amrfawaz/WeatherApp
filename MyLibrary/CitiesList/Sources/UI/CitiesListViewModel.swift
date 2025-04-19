@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 import SharedModules
-import CoreDataManager
 
 public final class CitiesListViewModel: ObservableObject {
     @Published var cities: [City] = []
@@ -17,17 +16,19 @@ public final class CitiesListViewModel: ObservableObject {
 
     internal var searchCityName = ""
     internal var selectedCity: City?
-
     var selectedHistoryCity: City?
+
+    private let citiesListUseCase: CitiesListUseCase
 
     let actionSubject = PassthroughSubject<CitiesListView.Action, Never>()
 
-    public init() {}
+    public init(citiesListUseCase: CitiesListUseCase) {
+        self.citiesListUseCase = citiesListUseCase
+    }
 
     func addCityAction() {
         actionSubject.send(.showSearchView)
     }
-
     
     func addCity(cityName: String) {
         guard !cities.contains(where: { $0.name == cityName }) else { return }
@@ -42,29 +43,18 @@ public final class CitiesListViewModel: ObservableObject {
         saveCity(city)
     }
 
-
     func resetSelectedCity() {
         searchCityName = ""
     }
 
     func fetchCachedCities() {
-        do {
-            cities = try CoreDataManager.shared.retrieveAllCities()
-            print("Retrieved All cached cities successfully")
-        } catch {
-            print("Failed to insert city: \(error)")
-        }
+        cities = citiesListUseCase.getAllCities()
     }
 }
 
 private extension CitiesListViewModel {
     func saveCity(_ city: City) {
-        do {
-            try CoreDataManager.shared.insertCity(city)
-            print("City inserted successfully")
-        } catch {
-            print("Failed to insert city: \(error)")
-        }
+        citiesListUseCase.cacheCity(city: city)
     }
 }
 
@@ -74,7 +64,9 @@ private extension CitiesListViewModel {
 
 public extension CitiesListViewModel {
     static var mockCitiesListViewModel: CitiesListViewModel {
-        let viewModel = CitiesListViewModel()
+        
+        let viewModel = CitiesListViewModel(citiesListUseCase: CitiesListUseCase(repository: CitiesListRepositoryImp(coreDataApi: CoreDataStoreAPI())))
+                                            
         viewModel.cities = City.mockedCities
         return viewModel
     }

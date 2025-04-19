@@ -12,7 +12,7 @@ import CitiesList
 struct WeatherApp: App {
     var body: some Scene {
         WindowGroup {
-            let viewModel = CitiesListViewModel()
+            let viewModel = CitiesListViewModel(citiesListUseCase: CitiesListUseCase(repository: CitiesListRepositoryImp(coreDataApi: CoreDataStoreAPI())))
             CitiesListView(viewModel: viewModel)
         }
     }

@@ -10,23 +10,24 @@ import Foundation
 import SharedModules
 
 final public class CityViewModel: ObservableObject {
-    let city: City
-    let citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>
-    let actionSubject = PassthroughSubject<CityView.Action, Never>()
+    private let citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>
+    private let city: City
 
-    public init(city: City, citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>) {
+    var cityName: String {
+        city.name
+    }
+
+    public init(
+        city: City,
+        citiesListActionSubject: PassthroughSubject<CitiesListView.Action, Never>
+    ) {
         self.city = city
         self.citiesListActionSubject = citiesListActionSubject
     }
+}
 
-    func showHistory() {
-        actionSubject.send(.showCityHistory)
-    }
-
-    func showWeather() {
-        actionSubject.send(.showCityWeather)
-    }
-
+// MARK: - Extension
+extension CityViewModel {
     func didTapDetailDisclosureButton() {
         citiesListActionSubject.send(.showHistory(city: city))
     }
@@ -34,7 +35,6 @@ final public class CityViewModel: ObservableObject {
     func didTapCity() {
         citiesListActionSubject.send(.showWeather(city: city))
     }
-
 }
 
 // MARK: Mocks

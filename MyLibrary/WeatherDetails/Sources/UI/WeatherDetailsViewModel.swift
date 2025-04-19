@@ -99,7 +99,7 @@ public extension WeatherDetailsViewModel {
     static var mockWeatherDetailsViewModel: WeatherDetailsViewModel {
         WeatherDetailsViewModel(
             city: .mockedCity1,
-            fetchCityWeatherUseCase: FetchCityWeatherUseCase(repository: MockWeatherDetailsRepository())
+            fetchCityWeatherUseCase: FetchCityWeatherUseCase(repository: WeatherDetailsRepositoryImp(api: WeatherAPI(), coreDataApi: CoreDataStoreAPI()))
         )
     }
 }

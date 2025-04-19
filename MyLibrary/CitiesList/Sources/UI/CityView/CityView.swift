@@ -10,8 +10,9 @@ import CoreStyles
 
 public struct CityView: View {
     enum Constants {
-        static let iconSize = 30.0
-        static let infoIcon = "info.circle"
+        static let iconWidth = 22.0
+        static let iconHight = 25.0
+        static let infoIcon = "info.circle.fill"
     }
 
     enum Action {
@@ -26,47 +27,50 @@ public struct CityView: View {
     }
 
     public var body: some View {
+        content
+            .padding(.horizontal, Style.Spacing.md)
+    }
+}
+
+// MARK: - Extenstion
+
+private extension CityView {
+    var content: some View {
         VStack {
             HStack {
-                Text(viewModel.city.name)
-                    .typography(.heading03)
-                    .onTapGesture {
-                        viewModel.didTapCity()
-                    }
+                cityNameText
 
                 Spacer()
 
-                Image(systemName: Constants.infoIcon)
-                    .resizable()
-                    .typography(.body01)
-                    .frame(
-                        width: Constants.iconSize,
-                        height: Constants.iconSize
-                    )
-                    .foregroundColor(.gray)
-                    .onTapGesture {
-                        viewModel.didTapDetailDisclosureButton()
-                    }
+                detailsDisclosureButton
             }
 
             Divider()
         }
-        .padding(.horizontal, Style.Spacing.md)
-        .onReceive(viewModel.actionSubject) { action in
-//            handleActions(action: action)
-        }
     }
 
-    private func handleActions(action: Action) {
-        switch action {
-        case .showCityHistory:
-            viewModel.showHistory()
-        case .showCityWeather:
-            viewModel.showWeather()
-        }
+    var cityNameText: some View {
+        Text(viewModel.cityName)
+            .typography(.heading03)
+            .onTapGesture {
+                viewModel.didTapCity()
+            }
+    }
+
+    var detailsDisclosureButton: some View {
+        Image(systemName: Constants.infoIcon)
+            .resizable()
+            .typography(.body01)
+            .frame(
+                width: Constants.iconWidth,
+                height: Constants.iconHight
+            )
+            .foregroundColor(.gray)
+            .onTapGesture {
+                viewModel.didTapDetailDisclosureButton()
+            }
     }
 }
-
 
 // MARK: - Preview
 

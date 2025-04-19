@@ -20,7 +20,7 @@ final class Container {
         var fetchCityWeatherUseCase: FetchCityWeatherUseCase {
             let weatherDetailsRepository = WeatherDetailsRepositoryImp(
                 api: WeatherAPI(),
-                coreDataApi: CoreDataStoreAPI()
+                coreDataApi: WeatherDetails.CoreDataStoreAPI()
             )
             return FetchCityWeatherUseCase(repository: weatherDetailsRepository)
         }
@@ -31,7 +31,7 @@ final class Container {
     static func getWeatherHistoryViewModel(city: City) -> WeatherHistoryViewModel {
         WeatherHistoryViewModel(
             cityName: city.name,
-            weatherHistoryUseCase: WeatherHistoryUseCase(repository: WeatherHistoryRepositiryImp(coreDataApi: CoreDataStoreAPI()))
+            weatherHistoryUseCase: WeatherHistoryUseCase(repository: WeatherHistoryRepositiryImp(coreDataApi: WeatherHistory.CoreDataStoreAPI()))
         )
     }
 }
