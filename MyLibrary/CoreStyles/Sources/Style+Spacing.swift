@@ -44,5 +44,8 @@ public extension Style {
 
     enum Size {
         public static let searchButtonHeight: Double = 40
+        public static let cityViewHeight = 50.0
+        public static let addCityButtonWidth = 200.0
+        public static let addCityButtonHeight = 80.0
     }
 }

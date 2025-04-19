@@ -35,6 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4240EFD42DB39B5800343150 /* swiftgen.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
 		4243D03D2DA904D100747EB9 /* Weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4243D0402DA904D100747EB9 /* WeatherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherApp.swift; sourceTree = "<group>"; };
 		4243D0422DA904D100747EB9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -77,6 +78,7 @@
 		4243D0342DA904D100747EB9 = {
 			isa = PBXGroup;
 			children = (
+				4240EFD42DB39B5800343150 /* swiftgen.yml */,
 				4243D06A2DA9064000747EB9 /* MyLibrary */,
 				4243D03F2DA904D100747EB9 /* Weather */,
 				4243D0502DA904D800747EB9 /* WeatherTests */,

@@ -44,6 +44,7 @@ private extension CityView {
 
                 detailsDisclosureButton
             }
+            .frame(height: Style.Size.cityViewHeight)
 
             Divider()
         }
@@ -51,7 +52,8 @@ private extension CityView {
 
     var cityNameText: some View {
         Text(viewModel.cityName)
-            .typography(.heading03)
+            .typography(.heading02)
+            .foregroundColor(Color(uiColor: .darkGray))
             .onTapGesture {
                 viewModel.didTapCity()
             }
@@ -65,7 +67,7 @@ private extension CityView {
                 width: Constants.iconWidth,
                 height: Constants.iconHight
             )
-            .foregroundColor(.gray)
+            .foregroundColor(.teal)
             .onTapGesture {
                 viewModel.didTapDetailDisclosureButton()
             }

@@ -47,11 +47,23 @@ public struct CitiesListView: View {
     }
 
     private var addCityButton: some View {
-        Button(action: {
-            viewModel.addCityAction()
-        }) {
-            Image(systemName: Constants.addIcon)
-                .typography(.heading03)
+        ZStack {
+            Button(action: {
+                viewModel.addCityAction()
+            }) {
+                ZStack {
+                    ModuleImage.buttonRight.swiftUIImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: Style.Size.addCityButtonWidth, height: Style.Size.addCityButtonHeight)
+                        .padding(.top, Style.Spacing.xl)
+                    
+                    Text("+")
+                        .typography(.heading01)
+                        .foregroundColor(.white)
+                }
+            }
+            .frame(width: 40, height: 100)
         }
     }
 
@@ -75,7 +87,9 @@ private extension CitiesListView {
         VStack {
             NavigationStack(path: $navigationPath) {
                 citiesScrollView
+                    .background(.clear)
                     .navigationTitle(Constants.citiesTitle)
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             addCityButton
@@ -114,6 +128,7 @@ private extension CitiesListView {
     
     var list: some View {
         LazyVStack {
+            
             ForEach(viewModel.cities) { city in
                 let cityViewModel = CityViewModel(
                     city: city,
@@ -155,7 +170,9 @@ struct CitiesListView_Previews: PreviewProvider {
     }
 
     private static func citiesListView() -> some View {
-        CitiesListView(viewModel: .mockCitiesListViewModel)
+        let viewModel = CitiesListViewModel(citiesListUseCase: CitiesListUseCase(repository: CitiesListRepositoryImp(coreDataApi: CoreDataStoreAPI())))
+        viewModel.cities = City.mockedCities
+        return CitiesListView(viewModel: viewModel)
     }
 }
 #endif
