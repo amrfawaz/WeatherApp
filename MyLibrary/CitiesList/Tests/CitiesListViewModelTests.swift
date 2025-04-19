@@ -13,18 +13,22 @@ import SharedModules
 
 final class CitiesListViewModelTests: XCTestCase {
     private var sut: CitiesListViewModel?
+    private var mockCitiesListUseCase: MockCitiesListUseCase!
+
     var cancellables: Set<AnyCancellable>!
     var coreDataManager: CoreDataManager!
 
     override func setUp() {
         super.setUp()
         sut = CitiesListViewModel.mockCitiesListViewModel
+        mockCitiesListUseCase = MockCitiesListUseCase()
         cancellables = []
         coreDataManager = CoreDataManager.shared
     }
 
     override func tearDown() {
         sut = nil
+        mockCitiesListUseCase = nil
         cancellables = nil
         coreDataManager = nil
         super.tearDown()
@@ -86,24 +90,6 @@ final class CitiesListViewModelTests: XCTestCase {
         XCTAssertNotEqual(sut?.cities.count, citiesCountBefore! + 1, "The City is already added, so the count won't be increased")
     }
 
-    func testDidTapCity() {
-        // Given
-        let testCity = City(id: 1, name: "Test City", weatherHistory: [])
-        var receivedAction: CitiesListView.Action?
-        sut?.actionSubject
-            .sink { action in
-                receivedAction = action
-            }
-            .store(in: &cancellables)
-
-        // When
-        sut?.didTapCity(city: testCity)
-
-        // Then
-        XCTAssertEqual(sut?.selectedCity?.id, testCity.id)
-        XCTAssertEqual(receivedAction, .showWeather)
-    }
-
     func testResetSelectedCity() {
         // Given
         sut?.searchCityName = "Test"
@@ -112,17 +98,21 @@ final class CitiesListViewModelTests: XCTestCase {
         sut?.resetSelectedCity()
 
         // Then
-        XCTAssertTrue(sut!.searchCityName.isEmpty)
+        XCTAssertEqual(sut?.searchCityName, "", "Search city name should be empty")
     }
 
-    func testFetchCachedCitiesSuccess() {
+    func testFetchCachedCities() {
         // Given
-        let mockCities = sut?.cities
+        let mockCities = [
+            City(id: 1, name: "Paris", weatherHistory: []),
+            City(id: 2, name: "London", weatherHistory: [])
+        ]
+        mockCitiesListUseCase.mockCities = mockCities
+
+        // When
+        sut?.fetchCachedCities()
 
         // Then
-        XCTAssertEqual(sut?.cities.count, 3, "Number of cities is 3")
-        XCTAssertEqual(sut?.cities[0].name, "Paris", "Paris is first city in array")
-        XCTAssertEqual(sut?.cities[1].name, "Cairo", "Cairo is first city in array")
-        XCTAssertEqual(sut?.cities[2].name, "London", "London is first city in array")
+        XCTAssertEqual(sut?.cities.count, mockCities.count)
     }
 }

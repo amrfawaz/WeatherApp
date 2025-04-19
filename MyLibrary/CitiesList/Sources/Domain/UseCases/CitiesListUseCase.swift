@@ -23,3 +23,26 @@ public class CitiesListUseCase {
         repository.fetchCachedCities()
     }
 }
+
+
+// MARK: - Mocks
+
+#if DEBUG
+public final class MockCitiesListUseCase: CitiesListUseCase {
+    var mockCities: [City] = []
+    var cachedCity: City?
+
+    public init() {
+        super.init(repository: CitiesListRepositoryImp(coreDataApi: CoreDataStoreAPI()))
+    }
+
+    override func getAllCities() -> [City] {
+        return mockCities
+    }
+
+    override func cacheCity(city: City) {
+        cachedCity = city
+    }
+}
+#endif
+
