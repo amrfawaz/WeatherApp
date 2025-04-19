@@ -55,13 +55,12 @@ public struct WeatherDetailsView: View {
 
     @ViewBuilder
     private var icon: some View {
-        VStack {
-            if let url = URL(string: viewModel.iconUrl()) {
-                Rectangle()
-                    .asyncImage(url: url)
-            }
+        if let url = URL(string: viewModel.iconUrl()) {
+            Rectangle()
+                .asyncImage(url: url)
+                .frame(width: 50, height: 50)
+                .clipShape(.rect(cornerRadius: Style.Spacing.md))
         }
-        .clipShape(.rect(cornerRadius: Style.Spacing.md))
     }
 
     private var description: some View {
